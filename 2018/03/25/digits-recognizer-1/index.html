@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang=en>
 <head>
     <!-- so meta -->
     <meta charset="utf-8">
@@ -12,11 +12,14 @@
 <meta property="og:url" content="https://attractor-software.github.io/2018/03/25/digits-recognizer-1/index.html">
 <meta property="og:site_name" content="Attractor Software Blog">
 <meta property="og:description" content="Today’s topic is like an introduction into the combination of computer vision and machine learning. All that I’ll do here is just fitting kNN model with the data of handwritten digits taken from the M">
-<meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-03-30T06:22:54.102Z">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://attractor-software.github.io/blog/2018/03/25/digits-recognizer-1/find-best-k.jpg">
+<meta property="og:image" content="https://attractor-software.github.io/blog/2018/03/25/digits-recognizer-1/classification-score.png">
+<meta property="og:updated_time" content="2018-03-30T07:02:26.411Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Digits Recognizer using Python and React. Train the model.">
 <meta name="twitter:description" content="Today’s topic is like an introduction into the combination of computer vision and machine learning. All that I’ll do here is just fitting kNN model with the data of handwritten digits taken from the M">
+<meta name="twitter:image" content="https://attractor-software.github.io/blog/2018/03/25/digits-recognizer-1/find-best-k.jpg">
     
     
         
@@ -58,7 +61,7 @@
          
           <li><a href="https://attractor-software.com/">About</a></li>
          
-          <li><a href="/blog/projects_url">Projects</a></li>
+          <li><a href="https://github.com/AttractorSoftware">Projects</a></li>
         
       </ul>
     </span>
@@ -111,7 +114,7 @@
 
     <div class="meta">
       <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">Attractor Software Blog</span>
+        <span itemprop="name">Teimur Gasanov</span>
       </span>
       
     <div class="postdate">
@@ -133,11 +136,11 @@
 <h3 id="Split-the-data"><a href="#Split-the-data" class="headerlink" title="Split the data"></a>Split the data</h3><p>Now we need to have two different datasets: one for testing and the other for training our model.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(X_train, X_test, y_train, y_test) = train_test_split(</span><br><span class="line">    digits.data, digits.target, test_size=<span class="number">0.25</span>, random_state=<span class="number">42</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
 <h2 id="Fit-the-model"><a href="#Fit-the-model" class="headerlink" title="Fit the model"></a>Fit the model</h2><h3 id="Find-best-k"><a href="#Find-best-k" class="headerlink" title="Find best k"></a>Find best k</h3><p>We can’t take k out of our mind, so let’s train model and evaluate accuracy for different k.<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ks = np.arange(<span class="number">2</span>, <span class="number">10</span>)</span><br><span class="line">scores = []</span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> ks:</span><br><span class="line">    model = KNeighborsClassifier(n_neighbors=k)</span><br><span class="line">    score = cross_val_score(model, X_train, y_train, cv=<span class="number">5</span>)</span><br><span class="line">    score.mean()</span><br><span class="line">    scores.append(score.mean())</span><br><span class="line">plt.plot(scores, ks)</span><br><span class="line">plt.xlabel(<span class="string">'accuracy'</span>)</span><br><span class="line">plt.ylabel(<span class="string">'k'</span>)</span><br></pre></td></tr></table></figure></p>
 <p>As the output we can see such plot:</p>
-
+<img src="/blog/2018/03/25/digits-recognizer-1/find-best-k.jpg">
 <p>Looking at this chart we can understand that the best accuracy was reached when k was 3.<br>So from now, we’ll be using k=3 for our model.</p>
 <h3 id="Evaluate-the-model-on-the-test-data"><a href="#Evaluate-the-model-on-the-test-data" class="headerlink" title="Evaluate the model on the test data"></a>Evaluate the model on the test data</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">model = KNeighborsClassifier(n_neighbors=<span class="number">3</span>)</span><br><span class="line">model.fit(X_train, y_train)</span><br><span class="line"></span><br><span class="line">z = model.predict(X_test)</span><br></pre></td></tr></table></figure>
 <p>Let’s now create a classification report to see the accuracy<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print(classification_report(y_test, z))</span><br></pre></td></tr></table></figure></p>
-
+<img src="/blog/2018/03/25/digits-recognizer-1/classification-score.png">
 <p>Amazing! We reached 99% accuracy!</p>
 <h1 id="To-be-continued"><a href="#To-be-continued" class="headerlink" title="To be continued"></a>To be continued</h1><p>In the next article I’ll create a <a href="https://reactjs.org/" target="_blank" rel="noopener">React</a> Application to draw the digits in order to join it with the classifier into a web application.</p>
 
@@ -158,7 +161,7 @@
          
           <li><a href="https://attractor-software.com/">About</a></li>
          
-          <li><a href="/blog/projects_url">Projects</a></li>
+          <li><a href="https://github.com/AttractorSoftware">Projects</a></li>
         
       </ul>
     </div>
@@ -206,7 +209,7 @@
          
           <li><a href="https://attractor-software.com/">About</a></li>
          
-          <li><a href="/blog/projects_url">Projects</a></li>
+          <li><a href="https://github.com/AttractorSoftware">Projects</a></li>
         
       </ul>
     </nav>
